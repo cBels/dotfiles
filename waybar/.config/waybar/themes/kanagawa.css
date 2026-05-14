@@ -23,7 +23,7 @@
 @define-color overlay2 #8b8b8b;
 
 /* Accent colors */
-@define-color blue      #7aa89f;
+@define-color blue      #7e9cd8;
 @define-color lavender  #a4b9ef;
 @define-color sapphire  #7fb4ca;
 @define-color sky       #7dc4e4;
@@ -52,7 +52,7 @@
 
 /* Module-specific background colors */
 @define-color bg-workspaces #2a2a37;
-@define-color bg-clock      #7aa89f;
+@define-color bg-clock      #7e9cd8;
 @define-color bg-system     #363646;
 @define-color bg-network    #363646;
 @define-color bg-audio      #363646;
