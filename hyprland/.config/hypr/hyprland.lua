@@ -31,18 +31,28 @@ hl.monitor({
     mode     = "2560x1440@359.98",
     position = "3440x0",
     scale    = 1,
+    vrr      = 1,
 })
 
 
+
+hl.config({
+    misc = {
+        vrr = 1,
+    },
+})
+
 -- ── Autostart ────────────────────────────────────────────────────────────────
 
+
 hl.on("hyprland.start", function()
+hl.exec_cmd("hyprctl keyword decoration:dim_inactive 0")
+hl.exec_cmd("hyprctl keyword decoration:dim_strength 0.4")
 hl.exec_cmd("wl-paste --type text --watch cliphist store")
 hl.exec_cmd("mako")
 hl.exec_cmd("waybar")
 hl.exec_cmd("hypridle")
 hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill")
-hl.exec_cmd("hyprctl dispatch focusmonitor HDMI-A-1")
 end)
 
 
@@ -62,7 +72,8 @@ hl.config({
 
     decoration = {
         rounding = 0,
-
+    dim_inactive = true,      -- legg til denne
+    dim_strength = 0.3,        -- og denne
         blur = {
             enabled = true,
             size    = 3,
@@ -97,12 +108,6 @@ hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "easeOut
 
 
 -- ── Window rules ──────────────────────────────────────────────────────────────
-
-hl.window_rule({
-    name    = "steam-on-dp2",
-    match   = { class = "^(steam_app)" },
-    monitor = "DP-2",
-})
 
 
 -- ── Keybindings ───────────────────────────────────────────────────────────────
@@ -167,3 +172,7 @@ hl.bind("ALT + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
+
+-- Monitors off
+hl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("wlopm --off HDMI-A-1 && wlopm --off DP-2"))
+hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("wlopm --on HDMI-A-1 && wlopm --on DP-2"))
