@@ -1,0 +1,274 @@
+/**
+ * @name Gruvbox Dark
+ * @description Gruvbox Dark color scheme for Discord / Vencord
+ * @author cBels
+ * @version 1.0.0
+ */
+
+:root {
+    /* ── Gruvbox Dark palette ────────────────────────────────────────────────── */
+
+    --gb-bg-hard:  #1d2021;
+    --gb-bg:       #282828;
+    --gb-bg-soft:  #32302f;
+    --gb-bg1:      #3c3836;
+    --gb-bg2:      #504945;
+    --gb-bg3:      #665c54;
+    --gb-bg4:      #7c6f64;
+    --gb-gray:     #928374;
+    --gb-fg:       #ebdbb2;
+    --gb-fg1:      #d5c4a1;
+    --gb-fg2:      #bdae93;
+    --gb-fg3:      #a89984;
+
+    --gb-red:      #cc241d;  --gb-red-b:    #fb4934;
+    --gb-green:    #98971a;  --gb-green-b:  #b8bb26;
+    --gb-yellow:   #d79921;  --gb-yellow-b: #fabd2f;
+    --gb-blue:     #458588;  --gb-blue-b:   #83a598;
+    --gb-purple:   #b16286;  --gb-purple-b: #d3869b;
+    --gb-aqua:     #689d6a;  --gb-aqua-b:   #8ec07c;
+    --gb-orange:   #d65d0e;  --gb-orange-b: #fe8019;
+
+    /* ── Backgrounds ─────────────────────────────────────────────────────────── */
+
+    --background-primary:           var(--gb-bg);
+    --background-secondary:         var(--gb-bg-soft);
+    --background-secondary-alt:     var(--gb-bg1);
+    --background-tertiary:          var(--gb-bg-hard);
+    --background-accent:            var(--gb-bg2);
+    --background-floating:          var(--gb-bg);
+    --background-nested-floating:   var(--gb-bg-soft);
+    --background-mobile-primary:    var(--gb-bg);
+    --background-mobile-secondary:  var(--gb-bg-hard);
+
+    --background-modifier-hover:    rgba(168, 153, 132, 0.08);
+    --background-modifier-active:   rgba(168, 153, 132, 0.16);
+    --background-modifier-selected: rgba(168, 153, 132, 0.24);
+    --background-modifier-accent:   rgba(168, 153, 132, 0.12);
+
+    --background-message-hover:     rgba(168, 153, 132, 0.04);
+
+    /* ── Text ────────────────────────────────────────────────────────────────── */
+
+    --header-primary:              var(--gb-fg);
+    --header-secondary:            var(--gb-fg2);
+    --text-normal:                 var(--gb-fg);
+    --text-muted:                  var(--gb-gray);
+    --text-link:                   var(--gb-blue-b);
+    --text-link-low-saturation:    var(--gb-blue-b);
+    --text-positive:               var(--gb-green-b);
+    --text-warning:                var(--gb-yellow-b);
+    --text-danger:                 var(--gb-red-b);
+    --text-brand:                  var(--gb-blue-b);
+
+    /* ── Interactive elements ────────────────────────────────────────────────── */
+
+    --interactive-normal:  var(--gb-fg1);
+    --interactive-hover:   var(--gb-fg);
+    --interactive-active:  var(--gb-fg);
+    --interactive-muted:   var(--gb-gray);
+
+    /* ── Channels / sidebar ──────────────────────────────────────────────────── */
+
+    --channel-icon:     var(--gb-gray);
+    --channels-default: var(--gb-fg2);
+
+    /* ── Brand (replaces Discord blurple with Gruvbox blue) ──────────────────── */
+
+    --brand-experiment:     var(--gb-blue-b);
+    --brand-experiment-100: rgba(131, 165, 152, 0.10);
+    --brand-experiment-200: rgba(131, 165, 152, 0.20);
+    --brand-experiment-300: rgba(131, 165, 152, 0.30);
+    --brand-experiment-400: rgba(131, 165, 152, 0.40);
+    --brand-experiment-500: #83a598;
+    --brand-experiment-530: #7a9d90;
+    --brand-experiment-560: #719488;
+    --brand-experiment-600: #688b80;
+    --brand-experiment-630: #5f8278;
+    --brand-experiment-660: #567970;
+    --brand-experiment-700: #4d7068;
+    --brand-experiment-760: #3b5e58;
+    --brand-experiment-800: #325550;
+    --brand-experiment-860: #204340;
+    --brand-experiment-900: #173a38;
+
+    /* ── Inputs ──────────────────────────────────────────────────────────────── */
+
+    --input-background:       var(--gb-bg1);
+    --input-placeholder-text: var(--gb-gray);
+
+    /* ── Scrollbars ──────────────────────────────────────────────────────────── */
+
+    --scrollbar-thin-thumb:                    var(--gb-bg2);
+    --scrollbar-thin-track:                    transparent;
+    --scrollbar-auto-thumb:                    var(--gb-bg2);
+    --scrollbar-auto-track:                    var(--gb-bg-soft);
+    --scrollbar-auto-scrollbar-color-thumb:    var(--gb-bg2);
+    --scrollbar-auto-scrollbar-color-track:    var(--gb-bg-soft);
+
+    /* ── Borders ─────────────────────────────────────────────────────────────── */
+
+    --border-strong:  var(--gb-bg2);
+    --border-faint:   var(--gb-bg1);
+    --border-subtle:  var(--gb-bg1);
+
+    /* ── Status ──────────────────────────────────────────────────────────────── */
+
+    --status-positive-background: rgba(152, 151, 26,  0.15);
+    --status-positive-text:       var(--gb-green-b);
+    --status-warning-background:  rgba(215, 153, 33,  0.15);
+    --status-warning-text:        var(--gb-yellow-b);
+    --status-danger-background:   rgba(204, 36,  29,  0.15);
+    --status-danger-text:         var(--gb-red-b);
+    --status-danger:              var(--gb-red-b);
+
+    /* ── Mentions ────────────────────────────────────────────────────────────── */
+
+    --mention-background: rgba(131, 165, 152, 0.12);
+    --mention-foreground: var(--gb-blue-b);
+
+    /* ── Modals ──────────────────────────────────────────────────────────────── */
+
+    --modal-background:        var(--gb-bg);
+    --modal-footer-background: var(--gb-bg-soft);
+
+    /* ── Misc ────────────────────────────────────────────────────────────────── */
+
+    --activity-card-background: var(--gb-bg-soft);
+    --focus-primary:            var(--gb-blue-b);
+}
+
+/* ── Element-level overrides ─────────────────────────────────────────────────
+   Targeting elements that Discord renders with inline or hardcoded styles
+   rather than CSS variables.
+ ─────────────────────────────────────────────────────────────────────────── */
+
+/* Server list (far left column) */
+nav[class*="guilds"] {
+    background-color: var(--gb-bg-hard) !important;
+}
+
+/* User panel (bottom left) */
+section[class*="panels"] {
+    background-color: var(--gb-bg1) !important;
+}
+
+/* Voice/video call panel */
+[class*="callContainer"] {
+    background-color: var(--gb-bg-soft) !important;
+}
+
+/* Message input box */
+[class*="textAreaSlate"],
+[class*="channelTextArea"] {
+    background-color: var(--gb-bg1) !important;
+    border-radius: 0 !important;
+}
+
+/* Code blocks */
+code, pre {
+    background-color: var(--gb-bg-hard) !important;
+    color: var(--gb-fg) !important;
+    border: 1px solid var(--gb-bg2) !important;
+    border-radius: 0 !important;
+}
+
+/* Inline code */
+code {
+    padding: 1px 4px !important;
+}
+
+/* Blockquotes */
+[class*="blockquote"] {
+    border-left-color: var(--gb-blue-b) !important;
+}
+
+/* Reactions */
+[class*="reaction"]:not([class*="reactionMe"]) {
+    background-color: var(--gb-bg1) !important;
+    border-color: var(--gb-bg2) !important;
+}
+
+[class*="reactionMe"] {
+    background-color: rgba(131, 165, 152, 0.15) !important;
+    border-color: var(--gb-blue-b) !important;
+}
+
+/* Context menus */
+[class*="menu"] {
+    background-color: var(--gb-bg-soft) !important;
+    border: 1px solid var(--gb-bg2) !important;
+    border-radius: 0 !important;
+}
+
+[class*="labelContainer"] {
+    border-radius: 0 !important;
+}
+
+/* Tooltips */
+[class*="tooltip"] {
+    background-color: var(--gb-bg-hard) !important;
+    color: var(--gb-fg) !important;
+    border-radius: 0 !important;
+}
+
+/* Unread badge / mention count */
+[class*="numberBadge"],
+[class*="badge"] {
+    background-color: var(--gb-red-b) !important;
+    border-radius: 0 !important;
+}
+
+/* Online / status indicators (keep default green, just tweak glow) */
+[class*="status"][style*="background-color: rgb(35, 165, 90)"],
+[class*="status"][style*="background-color: rgb(23, 137, 23)"] {
+    background-color: var(--gb-green-b) !important;
+}
+
+/* Selected message highlight */
+[class*="messageListItem"]:focus-visible,
+[class*="messageListItem"][class*="selected"] {
+    background-color: rgba(168, 153, 132, 0.08) !important;
+}
+
+/* Dividers */
+[class*="divider"] {
+    border-color: var(--gb-bg2) !important;
+}
+
+/* Search bar */
+[class*="searchBar"] {
+    background-color: var(--gb-bg-hard) !important;
+    border-radius: 0 !important;
+}
+
+/* Buttons */
+[class*="button"][class*="lookFilled"][class*="colorBrand"] {
+    background-color: var(--gb-blue-b) !important;
+    color: var(--gb-bg-hard) !important;
+    border-radius: 0 !important;
+}
+
+[class*="button"][class*="lookFilled"][class*="colorBrand"]:hover {
+    background-color: var(--gb-blue) !important;
+}
+
+[class*="button"][class*="lookFilled"][class*="colorRed"] {
+    background-color: var(--gb-red-b) !important;
+    border-radius: 0 !important;
+}
+
+[class*="button"]:not([class*="lookBlank"]) {
+    border-radius: 0 !important;
+}
+
+/* Modal / popup panels */
+[class*="modal"],
+[class*="root"][class*="fullscreenOnMobile"] {
+    border-radius: 0 !important;
+}
+
+/* Settings sidebar */
+[class*="sidebar"][class*="themedSidebar"] {
+    background-color: var(--gb-bg-soft) !important;
+}

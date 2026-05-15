@@ -39,9 +39,9 @@ hl.monitor({
 hl.on("hyprland.start", function()
 hl.exec_cmd("wl-paste --type text --watch cliphist store")
 hl.exec_cmd("mako")
-hl.exec_cmd("sleep 5 && hyprpaper")
 hl.exec_cmd("waybar")
 hl.exec_cmd("hypridle")
+hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill")
 hl.exec_cmd("hyprctl dispatch focusmonitor HDMI-A-1")
 end)
 
@@ -54,8 +54,8 @@ hl.config({
         gaps_out    = 10,
         border_size = 2,
         col = {
-            active_border   = "rgba(7e9cd8ff)",
-            inactive_border = "rgba(363646ff)",
+            active_border   = "rgba(83a598ff)",
+            inactive_border = "rgba(3c3836ff)",
         },
         layout = "dwindle",
     },

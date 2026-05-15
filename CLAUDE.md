@@ -63,7 +63,7 @@ All configs are managed with GNU Stow from `~/dotfiles/` → `~/.config/`.
 Reference configs (from YouTube/others) are stored in `~/referanse-configs/` for inspiration only.
 
 ## Design Preferences
-- **Color palette:** Kanagawa
+- **Color palette:** Gruvbox Dark 
 - **Style:** Technical and minimalist – straight edges, NO rounded corners
 - **OLED consideration:** Avoid bright colors on large static areas. Dark backgrounds are important.
 - **Waybar:** Minimalist – subtle modules, low visual noise

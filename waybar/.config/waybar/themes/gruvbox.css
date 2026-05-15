@@ -1,0 +1,53 @@
+/*
+ * Gruvbox Dark palette
+ * Using the same semantic variable names as kanagawa.css
+ * so style.css requires no selector changes — only the @import.
+ */
+
+/* Base backgrounds */
+@define-color base   #282828;
+@define-color mantle #1d2021;
+@define-color crust  #141617;
+
+/* Text */
+@define-color text     #ebdbb2;
+@define-color subtext1 #d5c4a1;
+@define-color subtext0 #bdae93;
+
+/* Surfaces */
+@define-color surface0 #3c3836;
+@define-color surface1 #504945;
+@define-color surface2 #665c54;
+
+/* Overlays / muted tones */
+@define-color overlay0 #7c6f64;
+@define-color overlay1 #928374;
+@define-color overlay2 #a89984;
+
+/* Accent colors */
+@define-color red     #fb4934;
+@define-color green   #b8bb26;
+@define-color yellow  #fabd2f;
+@define-color blue    #83a598;
+@define-color mauve   #83a598;   /* bright blue/teal — used for active workspace */
+@define-color teal    #8ec07c;
+@define-color peach   #fe8019;
+@define-color lavender #d3869b;
+@define-color sky     #8ec07c;
+@define-color sapphire #458588;
+@define-color maroon  #cc241d;
+@define-color pink    #d3869b;
+@define-color flamingo #fb4934;
+@define-color rosewater #ebdbb2;
+
+/* Convenience aliases */
+@define-color background-primary   #282828;
+@define-color background-secondary #3c3836;
+@define-color background-hover     #504945;
+@define-color border-color         #7c6f64;
+
+/* Status */
+@define-color success @green;
+@define-color warning @yellow;
+@define-color error   @red;
+@define-color info    @blue;
