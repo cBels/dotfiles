@@ -9,8 +9,8 @@
 - **Shell:** fish
 
 ## Monitors
-- **Monitor-1:** HDMI-A-1 – Lenovo P34WD-40, 3440x1440 ultrawide (OLED) @ 119.99Hz
-- **Monitor-2:** DP-2 – ASUS XG27ACDNG, 2560x1440 @ 359.98Hz
+- **Monitor-1:** HDMI-A-1 – Lenovo P34WD-40, 3440x1440 ultrawide @ 119.99Hz
+- **Monitor-2:** DP-2 – ASUS XG27ACDNG, 2560x1440 @ 359.98Hz (OLED)
 - Hyprland layout: HDMI-A-1 at 0x0, DP-2 at 3440x0
 
 ## Audio

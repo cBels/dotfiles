@@ -15,10 +15,10 @@ monitor = DP-2, 2560x1440@359.98, 3440x0, 1
 
 exec-once = wl-paste --type text --watch cliphist store
 exec-once = mako
-exec-once = hyprpaper
+exec-once = sleep 5 && hyprpaper
 exec-once = waybar
 exec-once = hypridle
-exec-once = hyprctl dispatch focusmonitor DP-2
+exec-once = hyprctl dispatch focusmonitor HDMI-A-1
 
 general {
     gaps_in = 5
@@ -53,6 +53,8 @@ animations {
     animation = fade, 1, 3, easeOut
     animation = workspaces, 1, 3, easeOut, slide
 }
+
+windowrule = monitor DP-2, match:class ^(steam_app)
 
 input {
     kb_layout = no

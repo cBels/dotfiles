@@ -3,8 +3,8 @@
 * {
 	border: none;
 	border-radius: 0;
-	font-family: 'JetBrains Mono', 'Hack Nerd Font', 'UbuntuMono', monospace;
-	font-size: 13px;
+	font-family: 'CaskaydiaCove Nerd Font', monospace;
+	font-size: 16px;
 	font-weight: 600;
 	min-height: 0;
 	padding: 0;
@@ -12,300 +12,108 @@
 }
 
 window#waybar {
-	background: rgba(15, 15, 20, 0.92);
-	border-bottom: 1px solid @border-color;
+	background: @mantle;
+	border-bottom: 1px solid @surface1;
 }
 
-/* -----------------------------------------------------------------------------
- * Tooltips
- * -------------------------------------------------------------------------- */
+/* ── Tooltips ────────────────────────────────────────────────────────────── */
 
 tooltip {
-	background: @background-primary;
+	background: @surface0;
 	color: @text;
-	border: 1px solid @border-color;
+	border: 1px solid @overlay0;
 	padding: 4px 8px;
 }
 
 tooltip label {
 	color: @text;
-	font-size: 12px;
+	font-size: 14px;
 }
 
-/* -----------------------------------------------------------------------------
- * Workspaces
- * -------------------------------------------------------------------------- */
+/* ── Workspaces ──────────────────────────────────────────────────────────── */
 
 #workspaces {
 	padding: 0 4px;
 }
 
 #workspaces button {
-	padding: 0 8px;
+	padding: 0 7px;
 	background: transparent;
-	color: @subtext0;
+	color: @overlay0;
 }
 
 #workspaces button:hover {
 	background: @surface0;
-	color: @text;
+	color: @subtext1;
 }
 
 #workspaces button.active,
 #workspaces button.focused {
 	background: @surface0;
-	color: @text;
+	color: @mauve;
 	border-bottom: 2px solid @mauve;
 }
 
 #workspaces button.empty {
-	opacity: 0.3;
+	color: @surface2;
 }
 
 #workspaces button.urgent {
 	color: @red;
-	border-bottom: 2px solid @red;
 }
 
-/* -----------------------------------------------------------------------------
- * Window title
- * -------------------------------------------------------------------------- */
-
-#window {
-	color: @subtext0;
-	padding: 0 12px;
-	border-left: 2px solid @border-color;
-}
-
-/* -----------------------------------------------------------------------------
- * Clock
- * -------------------------------------------------------------------------- */
+/* ── Clock ───────────────────────────────────────────────────────────────── */
 
 #clock {
-	color: @blue;
-	font-weight: bold;
-	padding: 0 12px;
-	font-size: 14px;
-	border-left: 2px solid @blue;
-}
-
-/* -----------------------------------------------------------------------------
- * System monitoring modules
- * -------------------------------------------------------------------------- */
-
-#memory {
-	color: @green;
-	border-left: 2px solid @green;
-	padding: 0 10px;
-}
-
-#cpu {
-	color: @blue;
-	border-left: 2px solid @blue;
-	padding: 0 10px;
-}
-
-#temperature {
-	color: @teal;
-	border-left: 2px solid @teal;
-	padding: 0 10px;
-}
-
-#temperature.critical {
-	color: @red;
-	border-left: 2px solid @red;
-}
-
-/* -----------------------------------------------------------------------------
- * Battery
- * -------------------------------------------------------------------------- */
-
-#battery {
-	color: @green;
-	border-left: 2px solid @green;
-	padding: 0 10px;
-}
-
-#battery.charging {
-	color: @yellow;
-	border-left: 2px solid @yellow;
-}
-
-#battery.warning {
-	color: @yellow;
-	border-left: 2px solid @yellow;
-}
-
-#battery.critical:not(.charging) {
-	color: @red;
-	border-left: 2px solid @red;
-}
-
-/* -----------------------------------------------------------------------------
- * Audio and Backlight
- * -------------------------------------------------------------------------- */
-
-#backlight {
-	color: @yellow;
-	border-left: 2px solid @yellow;
-	padding: 0 10px;
-}
-
-#pulseaudio {
-	color: @yellow;
-	border-left: 2px solid @yellow;
-	padding: 0 10px;
-}
-
-#pulseaudio.muted {
-	color: @subtext0;
-	border-left: 2px solid @subtext0;
-}
-
-/* -----------------------------------------------------------------------------
- * Network
- * -------------------------------------------------------------------------- */
-
-#network {
-	color: @green;
-	border-left: 2px solid @green;
-	padding: 0 10px;
-}
-
-#network.disconnected {
-	color: @red;
-	border-left: 2px solid @red;
-}
-
-#network.disabled {
-	color: @subtext0;
-	border-left: 2px solid @subtext0;
-}
-
-/* -----------------------------------------------------------------------------
- * Language / Keyboard
- * -------------------------------------------------------------------------- */
-
-#language {
-	color: @mauve;
-	border-left: 2px solid @mauve;
-	padding: 0 10px;
-}
-
-#keyboard-state {
-	color: @mauve;
-	border-left: 2px solid @mauve;
-	padding: 0 10px;
-}
-
-/* -----------------------------------------------------------------------------
- * Custom modules
- * -------------------------------------------------------------------------- */
-
-#custom-launcher {
-	color: @mauve;
-	font-size: 16px;
-	padding: 0 14px;
-	border-right: 2px solid @border-color;
-}
-
-#custom-weather {
-	color: @blue;
-	border-left: 2px solid @blue;
-	padding: 0 10px;
-}
-
-#custom-updates {
-	color: @yellow;
-	border-left: 2px solid @yellow;
-	padding: 0 10px;
-}
-
-#custom-updates.has-updates {
-	color: @peach;
-	border-left: 2px solid @peach;
-}
-
-#custom-vpn {
-	color: @teal;
-	border-left: 2px solid @teal;
-	padding: 0 10px;
-}
-
-#custom-vpn.connected {
-	color: @green;
-	border-left: 2px solid @green;
-}
-
-#custom-notification {
-	color: @lavender;
-	border-left: 2px solid @lavender;
-	padding: 0 10px;
-}
-
-#custom-cava {
-	color: @green;
-	border-left: 2px solid @green;
-	padding: 0 10px;
-}
-
-/* -----------------------------------------------------------------------------
- * Tray
- * -------------------------------------------------------------------------- */
-
-#tray {
-	padding: 0 10px;
-	border-left: 2px solid @border-color;
-}
-
-#tray > .passive {
-	opacity: 0.7;
-}
-
-#tray > .needs-attention {
-	color: @red;
-}
-
-/* -----------------------------------------------------------------------------
- * Idle inhibitor
- * -------------------------------------------------------------------------- */
-
-#idle_inhibitor {
-	color: @subtext0;
-	border-left: 2px solid @subtext0;
-	padding: 0 10px;
-}
-
-#idle_inhibitor.activated {
-	color: @yellow;
-	border-left: 2px solid @yellow;
-}
-
-#mode {
-	background: @warning;
-	color: @base;
+	color: @text;
 	font-weight: bold;
 	padding: 0 16px;
 }
 
-/* -----------------------------------------------------------------------------
- * Hover effects
- * -------------------------------------------------------------------------- */
+/* ── Right-side modules: base ────────────────────────────────────────────── */
 
-#clock:hover,
-#battery:hover,
-#cpu:hover,
-#memory:hover,
-#temperature:hover,
-#backlight:hover,
-#network:hover,
-#pulseaudio:hover,
-#custom-launcher:hover,
-#custom-notification:hover,
-#custom-weather:hover,
-#custom-updates:hover,
-#custom-vpn:hover,
-#language:hover,
-#custom-cava:hover {
-	opacity: 0.75;
+#network,
+#pulseaudio,
+#cpu,
+#memory,
+#temperature,
+#custom-gputemp {
+	color: @subtext1;
+	padding: 0 12px;
+}
+
+/* Separator on every right-side module except the leftmost (network) */
+#pulseaudio,
+#cpu,
+#memory,
+#temperature,
+#custom-gputemp {
+	border-left: 1px solid @overlay0;
+}
+
+/* ── Keyboard state (caps / num lock indicators) ─────────────────────────── */
+
+/* Unlocked: collapse to nothing */
+#keyboard-state label {
+	color: transparent;
+	padding: 0;
+	min-width: 0;
+	border: none;
+}
+
+/* Locked: visible with separator, highlighted in yellow */
+#keyboard-state label.locked {
+	color: @yellow;
+	padding: 0 12px;
+	border-left: 1px solid @overlay0;
+}
+
+/* ── State variants ──────────────────────────────────────────────────────── */
+
+#pulseaudio.muted {
+	color: @overlay1;
+}
+
+#temperature.critical {
+	color: @red;
 }
