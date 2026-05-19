@@ -1,4 +1,4 @@
-115;10u-- Hyprland configuration – cBels
+-- Hyprland configuration – cBels
 -- Converted from hyprland.conf
 -- Reference: https://wiki.hypr.land/Configuring/
 
@@ -88,11 +88,9 @@ hl.config({
 		gaps_in     = 3,
 		gaps_out    = 7,
 		border_size = 2,
-		col = {
-			active_border   = "rgba(83a598ff)",
-			inactive_border = "rgba(3c3836ff)",
-		},
-		layout = "dwindle",
+        ["col.active_border"]   = "rgba(83a598ff)",
+        ["col.inactive_border"] = "rgba(3c3836ff)",
+        layout = "dwindle",
 	},
 
 	decoration = {
