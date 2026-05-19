@@ -1,4 +1,4 @@
--- Hyprland configuration – cBels
+115;10u-- Hyprland configuration – cBels
 -- Converted from hyprland.conf
 -- Reference: https://wiki.hypr.land/Configuring/
 
@@ -20,83 +20,104 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT","auto")
 -- ── Monitors ─────────────────────────────────────────────────────────────────
 
 hl.monitor({
-    output   = "HDMI-A-1",
-    mode     = "3440x1440@119.99",
-    position = "0x0",
-    scale    = 1,
+	output   = "HDMI-A-1",
+	mode     = "3440x1440@120",
+	position = "0x0",
+	scale    = 1,
 })
 
 hl.monitor({
-    output   = "DP-2",
-    mode     = "2560x1440@359.98",
-    position = "3440x0",
-    scale    = 1,
-    vrr      = 1,
+	output   = "DP-2",
+	mode     = "2560x1440@360",
+	position = "3440x0",
+	scale    = 1,
+	vrr      = 1,
+	bitdepth = 10,
+	cm 		 = "hdr",
+	sdr_max_luminance = 250,
 })
 
 
+-- Workspace til monitor binding
+hl.workspace_rule({ workspace = "1", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "3", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "4", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "5", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "6", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "7", monitor = "DP-2" })
+hl.workspace_rule({ workspace = "8", monitor = "DP-2" })
+hl.workspace_rule({ workspace = "9", monitor = "DP-2" })
 
-hl.config({
-    misc = {
-        vrr = 1,
-    },
+-- Gamescope alltid på workspace 7
+hl.window_rule({
+	name  = "gamescope-ws7",
+	match = { class = "gamescope" },
+	workspace = "7",
 })
+
+-- Workspace 8
+hl.window_rule({
+	name = "steam-ws8",
+	match = {class = "steam" },
+	workspace = "8",
+})
+
 
 -- ── Autostart ────────────────────────────────────────────────────────────────
 
 
 hl.on("hyprland.start", function()
-hl.exec_cmd("hyprctl keyword decoration:dim_inactive 0")
-hl.exec_cmd("hyprctl keyword decoration:dim_strength 0.4")
-hl.exec_cmd("wl-paste --type text --watch cliphist store")
-hl.exec_cmd("mako")
-hl.exec_cmd("waybar")
-hl.exec_cmd("hypridle")
-hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill")
+	hl.timer(function()
+		hl.exec_cmd("hyprctl reload")
+	end, { timeout = 200, type = "oneshot"})
+	hl.exec_cmd("hyprctl keyword decoration:dim_inactive 0")
+	hl.exec_cmd("hyprctl keyword decoration:dim_strength 0.4")
+	hl.exec_cmd("wl-paste --type text --watch cliphist store")
+	hl.exec_cmd("mako")
+	hl.exec_cmd("waybar")
+	hl.exec_cmd("hypridle")
+	hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill")
 end)
 
 
 -- ── Look and feel ─────────────────────────────────────────────────────────────
 
 hl.config({
-    general = {
-        gaps_in     = 5,
-        gaps_out    = 10,
-        border_size = 2,
-        col = {
-            active_border   = "rgba(83a598ff)",
-            inactive_border = "rgba(3c3836ff)",
-        },
-        layout = "dwindle",
-    },
+	general = {
+		gaps_in     = 3,
+		gaps_out    = 7,
+		border_size = 2,
+		col = {
+			active_border   = "rgba(83a598ff)",
+			inactive_border = "rgba(3c3836ff)",
+		},
+		layout = "dwindle",
+	},
 
-    decoration = {
-        rounding = 0,
-    dim_inactive = true,      -- legg til denne
-    dim_strength = 0.3,        -- og denne
-        blur = {
-            enabled = true,
-            size    = 3,
-            passes  = 1,
-        },
-
-        shadow = {
-            enabled = false,
-        },
-    },
-
-    animations = {
-        enabled = true,
-    },
-
-    input = {
-        kb_layout = "no",
-    },
-
-    misc = {
-        force_default_wallpaper = 0,
-        disable_hyprland_logo   = true,
-    },
+	decoration = {
+		rounding = 0,
+		dim_inactive = true,
+		dim_strength = 0.3,
+		blur = {
+			enabled = true,
+			size    = 3,
+			passes  = 1,
+		},
+		shadow = {
+			enabled = false,
+		},
+	},
+	animations = {
+		enabled = true,
+	},
+	input = {
+		kb_layout = "no",
+	},
+	misc = {
+		force_default_wallpaper = 0,
+		disable_hyprland_logo   = true,
+	},
 })
 
 hl.curve("linear",  { type = "bezier", points = { {0.0, 0.0}, {1.0, 1.0} } })
@@ -115,7 +136,7 @@ hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "easeOut
 -- Applications
 hl.bind(mainMod .. " + return",    hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + backspace", hl.dsp.window.close())
-hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"))
+hl.bind(mainMod .. " + M",         hl.dsp.exit())
 hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + space",     hl.dsp.exec_cmd(menu))
@@ -139,7 +160,7 @@ hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right",
 
 -- Switch workspace (number row 1–9)
 for i = 1, 9 do
-    hl.bind(mainMod .. " + " .. i, hl.dsp.focus({ workspace = i }))
+	hl.bind(mainMod .. " + " .. i, hl.dsp.focus({ workspace = i }))
 end
 
 -- Switch workspace (numpad)
