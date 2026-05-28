@@ -188,7 +188,7 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
 ### Standard Launch Options (all Steam games)
 ```
-gamescope -w 2560 -h 1440 -r 360 -f -O DP-2 -- game-performance mangohud %command%
+gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 -- game-performance mangohud %command%
 ```
 
 **Explanation:**
@@ -196,7 +196,8 @@ gamescope -w 2560 -h 1440 -r 360 -f -O DP-2 -- game-performance mangohud %comman
 - `-w 2560 -h 1440` — forces correct resolution for ASUS OLED
 - `-r 360` — forces 360Hz refresh rate
 - `-f` — fullscreen
-- `-O DP-2` — forces output to ASUS OLED monitor
+- `--hdr-enabled` — tells Gamescope to properly handle HDR output for the ASUS OLED (which is always in HDR mode via Hyprland); without this, Gamescope sends SDR-encoded frames to an HDR display, causing warm colors (sunsets etc.) to appear glowing/oversaturated
+- `--hdr-sdr-content-nits 250` — sets SDR white point to 250 nits, matching `sdr_max_luminance = 250` in hyprland.lua; keeps gaming brightness consistent with the desktop
 - `game-performance` — CachyOS wrapper that sets CPU to performance mode during game
 - `mangohud` — FPS/GPU/CPU overlay
 - `%command%` — Steam's placeholder for the actual game executable
