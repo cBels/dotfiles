@@ -70,7 +70,7 @@ hl.window_rule({
 hl.on("hyprland.start", function()
 	hl.timer(function()
 		hl.exec_cmd("hyprctl reload")
-	end, { timeout = 200, type = "oneshot"})
+	end, { timeout = 2000, type = "oneshot"})
 	hl.exec_cmd("hyprctl keyword decoration:dim_inactive 0")
 	hl.exec_cmd("hyprctl keyword decoration:dim_strength 0.4")
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
