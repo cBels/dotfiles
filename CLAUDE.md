@@ -188,7 +188,7 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
 ### Standard Launch Options (all Steam games)
 ```
-gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 -- game-performance mangohud %command%
+gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --force-grab-cursor -- game-performance mangohud %command%
 ```
 
 **Explanation:**
@@ -198,6 +198,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 -- 
 - `-f` — fullscreen
 - `--hdr-enabled` — tells Gamescope to properly handle HDR output for the ASUS OLED (which is always in HDR mode via Hyprland); without this, Gamescope sends SDR-encoded frames to an HDR display, causing warm colors (sunsets etc.) to appear glowing/oversaturated
 - `--hdr-sdr-content-nits 250` — sets SDR white point to 250 nits, matching `sdr_max_luminance = 250` in hyprland.lua; keeps gaming brightness consistent with the desktop
+- `--force-grab-cursor` — prevents the cursor from rubberbanding back when hovering over text fields or sliders; without this, Wayland pointer constraints let the cursor escape Gamescope's window briefly, snapping it back
 - `game-performance` — CachyOS wrapper that sets CPU to performance mode during game
 - `mangohud` — FPS/GPU/CPU overlay
 - `%command%` — Steam's placeholder for the actual game executable
@@ -209,13 +210,17 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 -- 
 - Class name: `steam_app_526870`
 - Known issue: Gamescope required, game took over workspace and hid all windows without it
 - Graphics: Set to Vulkan in-game settings
+- Mouse rubberbanding on text fields/sliders — fixed by `--force-grab-cursor` in standard launch options
 
 **Baldur's Gate 3 (App ID: 1086940)**
 - Native Linux build (no Proton needed)
+- Launch options: `ENABLE_HDR_WSI=1 gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --force-grab-cursor -- game-performance mangohud %command%`
+  - `ENABLE_HDR_WSI=1` — enables Vulkan HDR WSI extension so BG3 renders natively in HDR; do NOT add `--hdr-itm-enabled` (ITM is for SDR games, adds a full GPU render pass per frame, causes choppy graphics when combined with native HDR output)
+  - `DXVK_HDR=1` — do NOT add; BG3 is native Vulkan, not DXVK, so this is a no-op
 - Save files: `~/.local/share/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/Savegames/Story/`
 - Also synced to Steam Cloud: `~/.local/share/Steam/userdata/17512678/1086940/remote/`
-- Known issue: Occasional stuttering — likely VRAM buildup over time, restart fixes it
-- MangoHud config at `~/.config/MangoHud/MangoHud.conf` — includes gpu_mem_used to monitor VRAM
+- Cyclic stutter (1s freeze / 1s normal after extended play) — caused by progressive VRAM exhaustion. Fixed by enabling Async Compute (`vkDeviceConfig.lsx`) and Triple Buffering (`graphicSettings.lsx`). If stutter returns, check `gpu_mem_used` in MangoHud overlay; if VRAM hits ~11-12GB, lower Texture Quality one notch in-game.
+- MangoHud config at `~/.config/MangoHud/MangoHud.conf` — shows fps, frame timing, gpu temp, and live VRAM usage
 
 **Guild Wars 2**
 - On Steam
@@ -252,10 +257,11 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 -- 
 
 ### Active / Unsolved
 - **Wallpaper rotation on boot** — Hyprland's built-in anime mascot wallpapers (Wall0/1/2.png in `/usr/share/hypr/`) appear briefly on boot before hyprpaper loads. Root cause: `misc.force_default_wallpaper = -1` in system lua config. Fix: add `misc { force_default_wallpaper = 0 }` to hyprland config.
-- **BG3 stuttering** — Intermittent after extended play sessions, likely VRAM buildup. Monitor with MangoHud `gpu_mem_used`. Restart game as workaround.
 - **OLED brightness** — sdrMaxLuminance defaults to 80 nits in Hyprland, making SDR content appear darker than expected. Fix: set `sdr_max_luminance = 200` in monitor config in hyprland.lua.
 
 ### Solved
+- **BG3 cyclic stutter** — 1s freeze / 1s normal loop after extended sessions, caused by progressive VRAM exhaustion. Fixed by enabling Async Compute in `vkDeviceConfig.lsx` and Triple Buffering in `graphicSettings.lsx`. Monitor with MangoHud `gpu_mem_used`; if VRAM still climbs to ~12GB, lower Texture Quality in-game.
+- **Mouse rubberbanding in games** — Cursor snaps back when hovering over UI elements (text fields, sliders) in Gamescope. Fixed by adding `--force-grab-cursor` to standard launch options.
 - **Black screen on live ISO boot** — Nvidia RTX 4070 Ti + no iGPU. Solution: selected "CachyOS Legacy Hardware (GPU nomodeset)" in GRUB boot menu.
 - **Monitor order** — Physical left monitor (Lenovo) is HDMI-A-1, physical right monitor (ASUS OLED) is DP-2. These names can swap — always verify with `hyprctl monitors` if something is wrong.
 - **60Hz locked in games** — XWayland locks refresh rate. Solution: use Gamescope with `-r 360 -O DP-2`.
