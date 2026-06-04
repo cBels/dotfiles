@@ -224,7 +224,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 
 **Guild Wars 2**
 - On Steam
-- ArcDPS damage meter: place `d3d11.dll` from deltaconnected.com/arcdps/x64/ in GW2 bin64 folder
+- ArcDPS damage meter: place `d3d11.dll` from deltaconnected.com/arcdps/x64/ in the **root** GW2 folder (same directory as `Gw2-64.exe`, NOT in bin64)
 - Launch options: same standard options as above
 
 ---
