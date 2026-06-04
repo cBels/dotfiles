@@ -77,7 +77,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("mako")
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("hypridle")
-	hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill")
+	hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallpaperflare.com_wallpaper.jpg -m fill")
 end)
 
 
@@ -88,8 +88,8 @@ hl.config({
 		gaps_in     = 3,
 		gaps_out    = 7,
 		border_size = 2,
-        ["col.active_border"]   = "rgba(83a598ff)",
-        ["col.inactive_border"] = "rgba(3c3836ff)",
+        ["col.active_border"]   = "rgba(cba6f7ff)",
+        ["col.inactive_border"] = "rgba(313244ff)",
         layout = "dwindle",
 	},
 

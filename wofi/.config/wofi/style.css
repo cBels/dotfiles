@@ -1,4 +1,4 @@
-/* Gruvbox Dark */
+/* Catppuccin Mocha */
 
 * {
   font-family: 'CaskaydiaCove Nerd Font', monospace;
@@ -8,30 +8,30 @@
 window {
   margin: 0px;
   padding: 8px;
-  border: 2px solid #83a598;
+  border: 2px solid #cba6f7;
   border-radius: 0;
-  background-color: #282828;
+  background-color: #1e1e2e;
 }
 
 #inner-box {
   margin: 4px;
   padding: 8px;
   border: none;
-  background-color: #282828;
+  background-color: #1e1e2e;
 }
 
 #outer-box {
   margin: 4px;
   padding: 8px;
   border: none;
-  background-color: #282828;
+  background-color: #1e1e2e;
 }
 
 #scroll {
   margin: 0px;
   padding: 8px;
   border: none;
-  background-color: #282828;
+  background-color: #1e1e2e;
 }
 
 #input {
@@ -39,43 +39,43 @@ window {
   padding: 8px;
   border: none;
   border-radius: 0;
-  color: #ebdbb2;
-  background-color: #3c3836;
+  color: #cdd6f4;
+  background-color: #313244;
 }
 
 #input image {
   border: none;
-  color: #83a598;
+  color: #cba6f7;
 }
 
 #input * {
-  outline: 2px solid #83a598 !important;
+  outline: 2px solid #cba6f7 !important;
 }
 
 #text {
   margin: 4px;
   border: none;
-  color: #ebdbb2;
+  color: #cdd6f4;
 }
 
 #entry {
-  background-color: #282828;
+  background-color: #1e1e2e;
 }
 
 #entry arrow {
   border: none;
-  color: #83a598;
+  color: #cba6f7;
 }
 
 #entry:selected {
-  border: 1px solid #83a598;
-  background-color: #3c3836;
+  border: 1px solid #cba6f7;
+  background-color: #313244;
 }
 
 #entry:selected #text {
-  color: #fabd2f;
+  color: #cba6f7;
 }
 
 #entry:drop(active) {
-  background-color: #504945 !important;
+  background-color: #585b70 !important;
 }
