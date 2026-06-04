@@ -1,2 +1,3 @@
 set number
-colorscheme catppuccin
+set background=dark
+colorscheme gruvbox

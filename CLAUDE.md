@@ -329,4 +329,75 @@ GitHub repo: **[to be added after cleanup]**
 
 ---
 
-*Last updated: May 2026*
+*Last updated: June 2026*
+
+---
+
+## Theming — How to Change the Color Scheme Across All Apps
+
+The system was migrated to **Gruvbox Dark** on 2026-06-04. All app themes are driven by hex colors hardcoded in config files (no single theme engine). When switching themes, every file below must be updated.
+
+### Current theme: Gruvbox Dark
+
+### Files to edit and what to change
+
+| App | File (always edit the `~/dotfiles/` path) | What to change |
+|-----|-------------------------------------------|----------------|
+| Waybar | `~/dotfiles/waybar/.config/waybar/style.css` | First line `@import` — points to a CSS file in `themes/`. Available: `themes/gruvbox.css`, `mocha.css`. |
+| Kitty | `~/dotfiles/kitty/.config/kitty/current-theme.conf` | Full color file — background, foreground, 16 ANSI colors, tab bar, borders, cursor. |
+| Mako | `~/dotfiles/mako/.config/mako/config` | `background-color`, `text-color`, `border-color` + urgency section colors. |
+| Wofi | `~/dotfiles/wofi/.config/wofi/style.css` | All hex colors in the CSS — background, text, accent, surface, selected state. |
+| Hyprland | `~/dotfiles/hyprland/.config/hypr/hyprland.lua` | `col.active_border` and `col.inactive_border` (rgba format, no `#`). |
+| Hyprlock | `~/dotfiles/hyprlock/.config/hypr/hyprlock.conf` | Background color (HDMI monitor), text/date color, input field inner/outer/check/fail colors, keyboard label color. |
+| Vesktop | `~/dotfiles/vesktop/.config/vesktop/settings/quickCss.css` | `@import` line — points to a file in `../themes/`. `themes/gruvbox.css` exists and was written by the user. |
+| Neovim | `~/dotfiles/nvim/.config/nvim/init.vim` | `colorscheme` line. `gruvbox.vim` is at `~/.config/nvim/colors/gruvbox.vim` (not via package manager — extracted manually). |
+| Starship | `~/dotfiles/starship/.config/starship.toml` | `palette = '...'` line (line ~29). `gruvbox_dark` palette is already defined in the same file. |
+| Micro | `~/.config/micro/settings.json` | `"colorscheme"` value. `gruvbox-dark.micro` is already installed at `~/.config/micro/colorschemes/`. |
+| Btop | `~/.config/btop/btop.conf` | `color_theme` value. Available themes are in `/usr/share/btop/themes/` — `gruvbox_dark.theme` is there. |
+
+> Micro and Btop are **not** in the dotfiles repo — edit them directly.
+
+### Reload commands after editing
+
+```bash
+hyprctl reload                          # Hyprland (borders, window rules)
+pkill waybar; waybar &>/dev/null &      # Waybar (restart required for CSS changes)
+disown                                  # detach waybar from terminal
+notify-send "Test" "Mako colors"        # Mako (live, no restart needed)
+# Kitty: Ctrl+Shift+F5 inside a kitty window
+# Starship/Btop: open a new terminal
+# Wofi: just open it (SUPER+Space)
+# Vesktop: restart the app
+# Hyprlock: SUPER+L to test
+# Neovim: open any file with nvim
+# Micro: open any file with micro
+```
+
+### Gruvbox Dark color palette (for reference when writing new configs)
+
+| Role | Hex |
+|------|-----|
+| Background | `#282828` |
+| Background hard | `#1d2021` |
+| bg1 (surface) | `#3c3836` |
+| bg2 | `#504945` |
+| bg4 (overlay) | `#7c6f64` |
+| Foreground | `#ebdbb2` |
+| fg1 (subtext) | `#d5c4a1` |
+| fg3 (muted) | `#a89984` |
+| Red / bright | `#cc241d` / `#fb4934` |
+| Green / bright | `#98971a` / `#b8bb26` |
+| Yellow / bright | `#d79921` / `#fabd2f` |
+| Blue / bright | `#458588` / `#83a598` |
+| Purple / bright | `#b16286` / `#d3869b` |
+| Aqua / bright | `#689d6a` / `#8ec07c` |
+| Orange / bright | `#d65d0e` / `#fe8019` |
+
+### Notes from the Gruvbox migration
+- Waybar already had `themes/gruvbox.css` — just needed the import changed.
+- Starship already had `[palettes.gruvbox_dark]` — just needed the `palette =` line changed.
+- Vesktop already had `themes/gruvbox.css` written by the user — just needed the `@import` in quickCss.
+- Btop already had `gruvbox_dark.theme` in `/usr/share/btop/themes/`.
+- Micro already had `gruvbox-dark.micro` in `~/.config/micro/colorschemes/`.
+- Neovim: `gruvbox.vim` is NOT installed as a system package — it lives at `~/.config/nvim/colors/gruvbox.vim` (extracted from the AUR git clone). If that file is gone, re-extract: `git --git-dir ~/.cache/paru/clone/vim-gruvbox-git/vim-gruvbox-git show HEAD:colors/gruvbox.vim > ~/.config/nvim/colors/gruvbox.vim`
+- GTK theme, VS Code, and Firefox were **not** changed — they require manual action.

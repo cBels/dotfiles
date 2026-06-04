@@ -1,6 +1,6 @@
-background-color=#1e1e2e
-text-color=#cdd6f4
-border-color=#cba6f7
+background-color=#282828
+text-color=#ebdbb2
+border-color=#83a598
 border-size=2
 border-radius=0
 font=CaskaydiaCove Nerd Font 12
@@ -8,12 +8,12 @@ default-timeout=5000
 ignore-timeout=0
 
 [urgency=low]
-border-color=#89b4fa
+border-color=#83a598
 
 [urgency=normal]
-border-color=#cba6f7
+border-color=#83a598
 
 [urgency=high]
-border-color=#f38ba8
-background-color=#f38ba8
-text-color=#1e1e2e
+border-color=#fb4934
+background-color=#282828
+text-color=#fb4934
