@@ -33,7 +33,7 @@ hl.monitor({
 	scale    = 1,
 	vrr      = 1,
 	bitdepth = 10,
-	cm 		 = "hdr",
+	cm 		 = "srgb",
 	sdr_max_luminance = 250,
 })
 
@@ -77,7 +77,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("mako")
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("hypridle")
-	hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallpaperflare.com_wallpaper.jpg -m fill")
+	hl.exec_cmd("swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill")
 end)
 
 
@@ -195,3 +195,6 @@ hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_S
 -- Monitors off
 hl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("wlopm --off HDMI-A-1 && wlopm --off DP-2"))
 hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("wlopm --on HDMI-A-1 && wlopm --on DP-2"))
+
+-- HDR toggle (OLED safe desktop = off, gaming = on)
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("bash /home/cbels/scripts/toggle-hdr.sh"))

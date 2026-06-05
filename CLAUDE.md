@@ -65,7 +65,7 @@ This file provides Claude with all relevant context about my system, software, p
 | Component | Software | Version |
 |-----------|----------|---------|
 | Status Bar | Waybar | 0.15.0 |
-| Wallpaper | Hyprpaper | 0.8.4 |
+| Wallpaper | swaybg | — |
 | Notifications | Mako | 1.11.0 |
 | App Launcher | Wofi | 1.5.3 |
 | Lock Screen | Hyprlock | 0.9.5 |
@@ -149,7 +149,9 @@ All configs are managed via **GNU Stow** from `~/dotfiles/`. Symlinks point from
 | Config | Actual File | Symlink |
 |--------|-------------|---------|
 | Hyprland | `~/dotfiles/hyprland/.config/hypr/hyprland.lua` | `~/.config/hypr/hyprland.lua` |
-| Hyprpaper | `~/dotfiles/hyprpaper/.config/hypr/hyprpaper.conf` | `~/.config/hypr/hyprpaper.conf` |
+| Wallpaper (swaybg) | launched from `hyprland.lua` — image path: `/home/cbels/Wallpaper/wallhaven-2y77jy.png` | (no separate config file) |
+| SDDM theme | `/usr/share/sddm/themes/gruvbox/Main.qml` | (not in dotfiles — edit with sudo) |
+| SDDM display | `/etc/sddm/xsetup.sh` | (not in dotfiles — edit with sudo) |
 | Hypridle | `~/dotfiles/hyprland/.config/hypr/hypridle.conf` | `~/.config/hypr/hypridle.conf` |
 | Hyprlock | `~/dotfiles/hyprlock/.config/hypr/hyprlock.conf` | `~/.config/hypr/hyprlock.conf` |
 | Waybar config | `~/dotfiles/waybar/.config/waybar/config.jsonc` | `~/.config/waybar/config.jsonc` |
@@ -196,7 +198,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 - `-w 2560 -h 1440` — forces correct resolution for ASUS OLED
 - `-r 360` — forces 360Hz refresh rate
 - `-f` — fullscreen
-- `--hdr-enabled` — tells Gamescope to properly handle HDR output for the ASUS OLED (which is always in HDR mode via Hyprland); without this, Gamescope sends SDR-encoded frames to an HDR display, causing warm colors (sunsets etc.) to appear glowing/oversaturated
+- `--hdr-enabled` — tells Gamescope the display is in HDR mode; without this when Hyprland's HDR is active, Gamescope sends SDR-encoded frames to an HDR display causing warm colors (sunsets etc.) to appear glowing/oversaturated. Harmless no-op when Hyprland is in SDR mode.
 - `--hdr-sdr-content-nits 250` — sets SDR white point to 250 nits, matching `sdr_max_luminance = 250` in hyprland.lua; keeps gaming brightness consistent with the desktop
 - `--force-grab-cursor` — prevents the cursor from rubberbanding back when hovering over text fields or sliders; without this, Wayland pointer constraints let the cursor escape Gamescope's window briefly, snapping it back
 - `game-performance` — CachyOS wrapper that sets CPU to performance mode during game
@@ -214,9 +216,11 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 
 **Baldur's Gate 3 (App ID: 1086940)**
 - Native Linux build (no Proton needed)
-- Launch options: `ENABLE_HDR_WSI=1 gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --force-grab-cursor -- game-performance mangohud %command%`
+- Launch options: `~/scripts/hdr-on.sh && ENABLE_HDR_WSI=1 gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --force-grab-cursor -- game-performance mangohud %command%; ~/scripts/hdr-off.sh`
+  - `~/scripts/hdr-on.sh` — enables HDR in Hyprland before launch (edits hyprland.lua + reloads, waits 2s); `~/scripts/hdr-off.sh` re-disables it when game exits (including on crash)
   - `ENABLE_HDR_WSI=1` — enables Vulkan HDR WSI extension so BG3 renders natively in HDR; do NOT add `--hdr-itm-enabled` (ITM is for SDR games, adds a full GPU render pass per frame, causes choppy graphics when combined with native HDR output)
   - `DXVK_HDR=1` — do NOT add; BG3 is native Vulkan, not DXVK, so this is a no-op
+  - **If HDR looks dull in-game**: adjust the HDR brightness slider in BG3's Options → Display — that controls the game's own tone-mapping and is the primary lever for perceived HDR brightness
 - Save files: `~/.local/share/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/Savegames/Story/`
 - Also synced to Steam Cloud: `~/.local/share/Steam/userdata/17512678/1086940/remote/`
 - Cyclic stutter (1s freeze / 1s normal after extended play) — caused by progressive VRAM exhaustion. Fixed by enabling Async Compute (`vkDeviceConfig.lsx`) and Triple Buffering (`graphicSettings.lsx`). If stutter returns, check `gpu_mem_used` in MangoHud overlay; if VRAM hits ~11-12GB, lower Texture Quality one notch in-game.
@@ -247,6 +251,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 | SUPER + KP_1-9 | Switch workspace (numpad) |
 | SUPER + SHIFT + KP_1-9 | Move window to workspace (numpad) |
 | SUPER + L | Lock screen (hyprlock) + screens off (wlopm) |
+| SUPER + H | Toggle HDR on/off for ASUS OLED (runs ~/scripts/toggle-hdr.sh) |
 | Print | Screenshot window (hyprshot) |
 | ALT + SHIFT + S | Screenshot region (hyprshot) |
 | Volume knob | wpctl volume up/down/mute |
@@ -256,10 +261,11 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 ## Known Issues & Bugs
 
 ### Active / Unsolved
-- **Wallpaper rotation on boot** — Hyprland's built-in anime mascot wallpapers (Wall0/1/2.png in `/usr/share/hypr/`) appear briefly on boot before hyprpaper loads. Root cause: `misc.force_default_wallpaper = -1` in system lua config. Fix: add `misc { force_default_wallpaper = 0 }` to hyprland config.
-- **OLED brightness** — sdrMaxLuminance defaults to 80 nits in Hyprland, making SDR content appear darker than expected. Fix: set `sdr_max_luminance = 200` in monitor config in hyprland.lua.
+- **Wallpaper rotation on boot** — Hyprland's built-in anime mascot wallpapers (Wall0/1/2.png in `/usr/share/hypr/`) appear briefly on boot before swaybg loads. Root cause: `misc.force_default_wallpaper = -1` in system lua config. Fix: add `misc { force_default_wallpaper = 0 }` to hyprland config.
 
 ### Solved
+- **OLED brightness** — `sdr_max_luminance` defaults to 80 nits in Hyprland, making SDR content appear darker than expected. Fixed by setting `sdr_max_luminance = 250` in the DP-2 monitor config in hyprland.lua.
+- **HDR always on (OLED wear)** — `cm = "hdr"` was permanently active. Changed to `cm = "srgb"` as default. HDR is toggled on only for gaming via `SUPER+H` or automatically via BG3 launch options. Toggle scripts live in `~/scripts/`.
 - **BG3 cyclic stutter** — 1s freeze / 1s normal loop after extended sessions, caused by progressive VRAM exhaustion. Fixed by enabling Async Compute in `vkDeviceConfig.lsx` and Triple Buffering in `graphicSettings.lsx`. Monitor with MangoHud `gpu_mem_used`; if VRAM still climbs to ~12GB, lower Texture Quality in-game.
 - **Mouse rubberbanding in games** — Cursor snaps back when hovering over UI elements (text fields, sliders) in Gamescope. Fixed by adding `--force-grab-cursor` to standard launch options.
 - **Black screen on live ISO boot** — Nvidia RTX 4070 Ti + no iGPU. Solution: selected "CachyOS Legacy Hardware (GPU nomodeset)" in GRUB boot menu.
@@ -269,7 +275,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 - **Hyprland windowrule deprecated syntax** — `windowrulev2` is deprecated in 0.55. Use `windowrule` with new syntax.
 - **Norwegian keyboard layout** — Set via `input { kb_layout = no }` in hyprland config AND `sudo localectl set-keymap no`.
 - **Clipboard not working across apps** — Wayland clipboard requires `wl-paste --type text --watch cliphist store` running at startup. Copy in terminal with Ctrl+Shift+C.
-- **Hyprpaper not applying correct wallpaper** — Config was symlinked via stow to dotfiles repo. Edit `~/dotfiles/hyprpaper/.config/hypr/hyprpaper.conf` — not the symlink.
+- **Wallpaper tool** — Wallpaper is set by **swaybg**, not hyprpaper. It is launched as a startup command inside `hyprland.lua`: `swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill`. To change the wallpaper, edit that line in `~/dotfiles/hyprland/.config/hypr/hyprland.lua`.
 
 ---
 
@@ -329,7 +335,7 @@ GitHub repo: **[to be added after cleanup]**
 
 ---
 
-*Last updated: June 2026*
+*Last updated: 2026-06-04*
 
 ---
 
@@ -354,8 +360,9 @@ The system was migrated to **Gruvbox Dark** on 2026-06-04. All app themes are dr
 | Starship | `~/dotfiles/starship/.config/starship.toml` | `palette = '...'` line (line ~29). `gruvbox_dark` palette is already defined in the same file. |
 | Micro | `~/.config/micro/settings.json` | `"colorscheme"` value. `gruvbox-dark.micro` is already installed at `~/.config/micro/colorschemes/`. |
 | Btop | `~/.config/btop/btop.conf` | `color_theme` value. Available themes are in `/usr/share/btop/themes/` — `gruvbox_dark.theme` is there. |
+| SDDM | `/usr/share/sddm/themes/gruvbox/Main.qml` | All `readonly property color gruvXxx` values at the top of the file. Requires `sudo`. |
 
-> Micro and Btop are **not** in the dotfiles repo — edit them directly.
+> Micro, Btop, and SDDM are **not** in the dotfiles repo — edit them directly.
 
 ### Reload commands after editing
 
@@ -371,6 +378,7 @@ notify-send "Test" "Mako colors"        # Mako (live, no restart needed)
 # Hyprlock: SUPER+L to test
 # Neovim: open any file with nvim
 # Micro: open any file with micro
+# SDDM: no reload needed — changes take effect at next login screen
 ```
 
 ### Gruvbox Dark color palette (for reference when writing new configs)
