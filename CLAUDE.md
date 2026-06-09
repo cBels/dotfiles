@@ -20,7 +20,7 @@ This file provides Claude with all relevant context about my system, software, p
 | Component | Details |
 |-----------|---------|
 | CPU | Intel Core i7-10700KF (8-core, 16-thread, Comet Lake, no iGPU) @ 5.1GHz boost |
-| GPU | NVIDIA GeForce RTX 4070 Ti (AD104/Lovelace, driver 595.71.05) |
+| GPU | NVIDIA GeForce RTX 4070 Ti (AD104/Lovelace, driver 610.43.02) |
 | RAM | 32GB DDR4 4000MT/s |
 | Motherboard | ASUS ROG STRIX Z490-I GAMING (UEFI/BIOS v2701, 2022-12-23) |
 | Storage (OS) | Samsung SSD 970 EVO Plus 250GB NVMe (232.89 GiB) — /dev/nvme0n1 |
@@ -52,11 +52,11 @@ This file provides Claude with all relevant context about my system, software, p
 | Software | Version |
 |----------|---------|
 | Distro | CachyOS (base: Arch Linux) |
-| Kernel | linux-cachyos 7.0.5-2 (also has LTS: 6.18.28-1) |
+| Kernel | linux-cachyos 7.0.11-1 (also has LTS: 6.18.33-2) |
 | Init | systemd v260 |
-| Display Server | Wayland (Xwayland 24.1.11 for compatibility) |
+| Display Server | Wayland (Xwayland 24.1.12 for compatibility) |
 | Display Manager | SDDM 0.21.0 (autologin enabled) |
-| Window Manager | Hyprland 0.55.0 |
+| Window Manager | Hyprland 0.55.3 |
 | Compositor | Hyprland (Wayland native) |
 
 > **Important:** Hyprland 0.55 uses **Lua** as the primary config format. `hyprland.conf` is deprecated. Config is in `hyprland.lua`. `windowrulev2` is also deprecated — use `windowrule` with new syntax.
@@ -70,7 +70,7 @@ This file provides Claude with all relevant context about my system, software, p
 | App Launcher | Wofi | 1.5.3 |
 | Lock Screen | Hyprlock | 0.9.5 |
 | Idle Daemon | Hypridle | 0.1.7 |
-| File Manager | Dolphin | 26.04.1 |
+| File Manager | Dolphin | 26.04.2 |
 | Polkit Agent | Hyprpolkitagent | 0.1.3 |
 | Clipboard | Cliphist + wl-clipboard | 0.7.0 |
 | Screenshot | Hyprshot | 1.3.0 |
@@ -78,7 +78,7 @@ This file provides Claude with all relevant context about my system, software, p
 ### Terminal & Shell
 | Component | Software | Version |
 |-----------|----------|---------|
-| Terminal | Kitty | 0.46.2 |
+| Terminal | Kitty | 0.47.1 |
 | Shell | Fish | 4.7.1 |
 | Prompt | Starship | 1.25.1 |
 
@@ -93,7 +93,7 @@ This file provides Claude with all relevant context about my system, software, p
 ### Browsers & Communication
 | Software | Version |
 |----------|---------|
-| Firefox | 150.0.2 |
+| Firefox | 151.0.3 |
 | Vesktop (Discord) | 1.6.5 |
 | TeamSpeak | 6.0.0beta4 |
 
@@ -116,13 +116,14 @@ This file provides Claude with all relevant context about my system, software, p
 - `ddcutil` 2.2.7 — monitor brightness control via DDC/CI
 - `wlopm` 1.0.0 — turn monitors on/off (used for screen sleep shortcut)
 - `brightnessctl` — waybar scroll brightness (laptop-style, limited use on desktop)
+- `wl-gammarelay-rs` 1.0.1 — Wayland gamma/brightness control via D-Bus (installed but ineffective on Nvidia — see Nvidia notes)
 - `btop` 1.4.7 — system monitor
 - `pavucontrol` — PipeWire/audio GUI
 - `stow` 2.4.1 — dotfiles management
 - `snapper` + `btrfs-assistant` — BTRFS snapshots
 
 ### Audio Stack
-- PipeWire 1.6.4 (active)
+- PipeWire 1.6.6 (active)
 - WirePlumber 0.5.14
 - pipewire-pulse + pipewire-alsa
 
@@ -153,6 +154,7 @@ All configs are managed via **GNU Stow** from `~/dotfiles/`. Symlinks point from
 | SDDM theme | `/usr/share/sddm/themes/gruvbox/Main.qml` | (not in dotfiles — edit with sudo) |
 | SDDM display | `/etc/sddm/xsetup.sh` | (not in dotfiles — edit with sudo) |
 | Hypridle | `~/dotfiles/hyprland/.config/hypr/hypridle.conf` | `~/.config/hypr/hypridle.conf` |
+| Idle dim shader | `~/dotfiles/hyprland/.config/hypr/dim.frag` | `~/.config/hypr/dim.frag` |
 | Hyprlock | `~/dotfiles/hyprlock/.config/hypr/hyprlock.conf` | `~/.config/hypr/hyprlock.conf` |
 | Waybar config | `~/dotfiles/waybar/.config/waybar/config.jsonc` | `~/.config/waybar/config.jsonc` |
 | Waybar style | `~/dotfiles/waybar/.config/waybar/style.css` | `~/.config/waybar/style.css` |
@@ -183,6 +185,8 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 - No iGPU means CachyOS live ISO showed black screen — booted using "Legacy Hardware (nomodeset)" option
 - Monitor names (DP-2/HDMI-A-1) can occasionally swap between reboots
 - XWayland games lock to 60Hz without Gamescope
+- `wlr-gamma-control-unstable-v1` Wayland protocol is silently ignored by the Nvidia proprietary driver — tools like `wl-gammarelay-rs` connect fine but have no visible effect. Use Hyprland screen shaders instead for software-level brightness control.
+- `hyprctl keyword` does not work with the Lua config parser (Hyprland 0.55+). Use `hyprctl eval 'hl.config({...})'` for runtime config changes instead.
 
 ---
 
@@ -276,6 +280,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 - **Norwegian keyboard layout** — Set via `input { kb_layout = no }` in hyprland config AND `sudo localectl set-keymap no`.
 - **Clipboard not working across apps** — Wayland clipboard requires `wl-paste --type text --watch cliphist store` running at startup. Copy in terminal with Ctrl+Shift+C.
 - **Wallpaper tool** — Wallpaper is set by **swaybg**, not hyprpaper. It is launched as a startup command inside `hyprland.lua`: `swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill`. To change the wallpaper, edit that line in `~/dotfiles/hyprland/.config/hypr/hyprland.lua`.
+- **Idle dim affecting monitors on other input** — `ddcutil` sends DDC/CI commands directly to the monitor's hardware, dimming it regardless of which input is active. This caused monitors to dim when switched to the work computer. Fixed by replacing ddcutil with a Hyprland screen shader (`dim.frag`): hypridle applies the shader via `hyprctl eval 'hl.config({ decoration = { screen_shader = "...", dim_inactive = false } })'` on timeout and clears it on resume. `dim_inactive` is toggled off alongside the shader to prevent flickering. `cursor { no_hardware_cursors = true }` was added to hyprland.lua so the cursor renders through the compositor and gets dimmed with everything else (without it, the cursor leaves an unshaded trail).
 
 ---
 
@@ -335,7 +340,18 @@ GitHub repo: **[to be added after cleanup]**
 
 ---
 
-*Last updated: 2026-06-04*
+*Last updated: 2026-06-09*
+
+---
+
+## System Upgrade Logs
+
+Logs of full system upgrades (paru) are saved here for troubleshooting compatibility issues after reboots.
+
+| Date | File | Notable changes |
+|------|------|-----------------|
+| 2026-06-09 | `~/dotfiles/logs/paru-upgrade-2026-06-09.log` | NVIDIA 595→610, kernel 7.0.5→7.0.11, Kitty 0.46→0.47, Hyprland 0.55.0→0.55.3 |
+| 2026-06-09 | `/var/log/pacman.log` (filter by date) | Full pacman transaction log including post-install output — run `grep "2026-06-09" /var/log/pacman.log` |
 
 ---
 
