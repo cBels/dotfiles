@@ -116,6 +116,9 @@ hl.config({
 		force_default_wallpaper = 0,
 		disable_hyprland_logo   = true,
 	},
+	cursor = {
+		no_hardware_cursors = true,
+	},
 })
 
 hl.curve("linear",  { type = "bezier", points = { {0.0, 0.0}, {1.0, 1.0} } })
