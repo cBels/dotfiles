@@ -190,6 +190,16 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
 ---
 
+### Audio — Headphone EQ (added 2026-06-09)
+- **System-wide parametric EQ** via PipeWire's built-in filter-chain module — no extra software.
+- Config: `~/.config/pipewire/pipewire.conf.d/10-eq.conf` (loads `libpipewire-module-filter-chain` with `param_eq`)
+- EQ profile: `~/.config/pipewire/eq/dt1990-analytical.txt` (AutoEq "Equalizer APO ParametricEq" format, for DT 1990 Pro analytical pads; balanced-pads profile can be downloaded from autoeq.app and swapped via the `filename` line)
+- Creates virtual sink "DT 1990 Pro EQ" (`eq_sink.dt1990`), output hard-wired to the FiiO K7 by node name (`target.object`) — do NOT let it follow the default sink, that creates a loop → silence
+- Default sink = the EQ sink. Apps and volume knob target it via `@DEFAULT_AUDIO_SINK@`
+- **Gain staging:** K7 software volume parked at 100%, EQ sink is the working volume, K7 physical dial for coarse adjustment. Never push software volume past 100% — the EQ preamp headroom is calculated for ≤100%
+- After editing the EQ config: `systemctl --user restart pipewire pipewire-pulse wireplumber`, then verify sink with `wpctl status`
+
+---
 ## Gaming Setup
 
 ### Standard Launch Options (all Steam games)
@@ -266,6 +276,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 
 ### Active / Unsolved
 - **Wallpaper rotation on boot** — Hyprland's built-in anime mascot wallpapers (Wall0/1/2.png in `/usr/share/hypr/`) appear briefly on boot before swaybg loads. Root cause: `misc.force_default_wallpaper = -1` in system lua config. Fix: add `misc { force_default_wallpaper = 0 }` to hyprland config.
+- **Volume OSD disappeared (2026-06-09)** — a grey slider OSD previously appeared on volume changes; origin unknown (no OSD package installed, nothing in configs). Vanished around the Hyprland 0.55.0→0.55.3 / NVIDIA 595→610 upgrade, or EQ install session. Workaround: waybar shows volume %. If wanted: install `swayosd`.
 
 ### Solved
 - **OLED brightness** — `sdr_max_luminance` defaults to 80 nits in Hyprland, making SDR content appear darker than expected. Fixed by setting `sdr_max_luminance = 250` in the DP-2 monitor config in hyprland.lua.
@@ -281,6 +292,8 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 - **Clipboard not working across apps** — Wayland clipboard requires `wl-paste --type text --watch cliphist store` running at startup. Copy in terminal with Ctrl+Shift+C.
 - **Wallpaper tool** — Wallpaper is set by **swaybg**, not hyprpaper. It is launched as a startup command inside `hyprland.lua`: `swaybg -i /home/cbels/Wallpaper/wallhaven-2y77jy.png -m fill`. To change the wallpaper, edit that line in `~/dotfiles/hyprland/.config/hypr/hyprland.lua`.
 - **Idle dim affecting monitors on other input** — `ddcutil` sends DDC/CI commands directly to the monitor's hardware, dimming it regardless of which input is active. This caused monitors to dim when switched to the work computer. Fixed by replacing ddcutil with a Hyprland screen shader (`dim.frag`): hypridle applies the shader via `hyprctl eval 'hl.config({ decoration = { screen_shader = "...", dim_inactive = false } })'` on timeout and clears it on resume. `dim_inactive` is toggled off alongside the shader to prevent flickering. `cursor { no_hardware_cursors = true }` was added to hyprland.lua so the cursor renders through the compositor and gets dimmed with everything else (without it, the cursor leaves an unshaded trail).
+- **Volume knob unlimited (300%+)** — `wpctl set-volume` has no ceiling by default. Fixed with `-l 1.0` flag on the raise binding in hyprland.lua.
+- **PipeWire EQ "failed to open param_eq file"** — config path must match the real filename exactly; check `journalctl --user -u pipewire -e --no-pager`.
 
 ---
 
@@ -374,7 +387,7 @@ The system was migrated to **Gruvbox Dark** on 2026-06-04. All app themes are dr
 | Vesktop | `~/dotfiles/vesktop/.config/vesktop/settings/quickCss.css` | `@import` line — points to a file in `../themes/`. `themes/gruvbox.css` exists and was written by the user. |
 | Neovim | `~/dotfiles/nvim/.config/nvim/init.vim` | `colorscheme` line. `gruvbox.vim` is at `~/.config/nvim/colors/gruvbox.vim` (not via package manager — extracted manually). |
 | Starship | `~/dotfiles/starship/.config/starship.toml` | `palette = '...'` line (line ~29). `gruvbox_dark` palette is already defined in the same file. |
-| Micro | `~/.config/micro/settings.json` | `"colorscheme"` value. `gruvbox-dark.micro` is already installed at `~/.config/micro/colorschemes/`. |
+| Micro | `~/.config/micro/settings.json` | `"colorscheme"` value. `"gruvbox-tc"` |
 | Btop | `~/.config/btop/btop.conf` | `color_theme` value. Available themes are in `/usr/share/btop/themes/` — `gruvbox_dark.theme` is there. |
 | SDDM | `/usr/share/sddm/themes/gruvbox/Main.qml` | All `readonly property color gruvXxx` values at the top of the file. Requires `sudo`. |
 
@@ -422,6 +435,5 @@ notify-send "Test" "Mako colors"        # Mako (live, no restart needed)
 - Starship already had `[palettes.gruvbox_dark]` — just needed the `palette =` line changed.
 - Vesktop already had `themes/gruvbox.css` written by the user — just needed the `@import` in quickCss.
 - Btop already had `gruvbox_dark.theme` in `/usr/share/btop/themes/`.
-- Micro already had `gruvbox-dark.micro` in `~/.config/micro/colorschemes/`.
 - Neovim: `gruvbox.vim` is NOT installed as a system package — it lives at `~/.config/nvim/colors/gruvbox.vim` (extracted from the AUR git clone). If that file is gone, re-extract: `git --git-dir ~/.cache/paru/clone/vim-gruvbox-git/vim-gruvbox-git show HEAD:colors/gruvbox.vim > ~/.config/nvim/colors/gruvbox.vim`
 - GTK theme, VS Code, and Firefox were **not** changed — they require manual action.

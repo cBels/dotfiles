@@ -11,7 +11,7 @@ local menu        = "wofi --show drun"
 -- ── Environment variables (NVIDIA RTX 4070 Ti) ───────────────────────────────
 
 hl.env("LIBVA_DRIVER_NAME",           "nvidia")
-hl.env("GBM_BACKEND",                 "nvidia-drm")
+-- hl.env("GBM_BACKEND",                 "nvidia-drm")
 hl.env("__GLX_VENDOR_LIBRARY_NAME",   "nvidia")
 hl.env("NVD_BACKEND",                 "direct")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT","auto")
@@ -49,7 +49,7 @@ hl.workspace_rule({ workspace = "7", monitor = "DP-2" })
 hl.workspace_rule({ workspace = "8", monitor = "DP-2" })
 hl.workspace_rule({ workspace = "9", monitor = "DP-2" })
 
--- Gamescope alltid på workspace 7
+-- Gamescope allways on workspace 7
 hl.window_rule({
 	name  = "gamescope-ws7",
 	match = { class = "gamescope" },
@@ -92,7 +92,12 @@ hl.config({
         ["col.inactive_border"] = "rgba(3c3836ff)",
         layout = "dwindle",
 	},
-
+	dwindle = {
+		default_split_ratio = 0.8,
+		split_width_multiplier = 1.2,
+		split_bias = 1,
+		smart_resizing = true,
+	},
 	decoration = {
 		rounding = 0,
 		dim_inactive = true,
@@ -101,6 +106,7 @@ hl.config({
 			enabled = true,
 			size    = 3,
 			passes  = 1,
+			vibrancy = 0.2,
 		},
 		shadow = {
 			enabled = false,
@@ -110,15 +116,24 @@ hl.config({
 		enabled = true,
 	},
 	input = {
+		numlock_by_default = true,
+		follow_mouse = 1,
 		kb_layout = "no",
+		sensitivity = -0.2,
 	},
 	misc = {
 		force_default_wallpaper = 0,
 		disable_hyprland_logo   = true,
 	},
 	cursor = {
-		no_hardware_cursors = true,
+		no_hardware_cursors = 0,
 	},
+	ecosystem = {
+		no_donation_nag = true,
+	},
+	quirks = {
+		prefer_hdr = 2,
+	}
 })
 
 hl.curve("linear",  { type = "bezier", points = { {0.0, 0.0}, {1.0, 1.0} } })
@@ -191,7 +206,7 @@ hl.bind("PRINT",          hl.dsp.exec_cmd("hyprshot -m window"))
 hl.bind("ALT + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region"))
 
 -- Volume
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"))
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
 
