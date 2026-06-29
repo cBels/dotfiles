@@ -63,6 +63,11 @@ hl.window_rule({
 	workspace = "8",
 })
 
+hl.window_rule({
+	name = "Intellij",
+	match = {class = "jetbrains*"},
+	opacity = 0.7,
+})
 
 -- ── Autostart ────────────────────────────────────────────────────────────────
 
@@ -156,7 +161,7 @@ hl.bind(mainMod .. " + M",         hl.dsp.exit())
 hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + space",     hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd("firefox"))
+hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd("vivaldi"))
 
 -- Move focus
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
