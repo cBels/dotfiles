@@ -47,11 +47,17 @@ tooltip label {
 	color: @subtext1;
 }
 
+/* Visible on a monitor but not focused: colored number only */
+#workspaces button.visible {
+	color: @teal;
+}
+
+/* Active (= focused workspace): full indicator */
 #workspaces button.active,
 #workspaces button.focused {
 	background: @surface0;
-	color: @mauve;
-	border-bottom: 2px solid @mauve;
+	color: @teal;
+	border-bottom: 2px solid @teal;
 }
 
 #workspaces button.empty {
@@ -60,6 +66,40 @@ tooltip label {
 
 #workspaces button.urgent {
 	color: @red;
+}
+
+/* ── Right-monitor workspaces (7–9): orange accent ──────────────────────── */
+
+#workspaces button:nth-child(7) {
+	margin-left: 12px;
+}
+
+/* Visible on DP-2 (shown, no focus): orange number only */
+#workspaces button:nth-child(7).visible,
+#workspaces button:nth-child(8).visible,
+#workspaces button:nth-child(9).visible {
+	background: transparent;
+	color: @peach;
+	border-bottom: none;
+}
+
+/* Active/focused on DP-2: full orange indicator */
+#workspaces button:nth-child(7).active,
+#workspaces button:nth-child(8).active,
+#workspaces button:nth-child(9).active,
+#workspaces button:nth-child(7).focused,
+#workspaces button:nth-child(8).focused,
+#workspaces button:nth-child(9).focused {
+	background: @surface0;
+	color: @peach;
+	border-bottom: 2px solid @peach;
+}
+
+#workspaces button:nth-child(7):hover,
+#workspaces button:nth-child(8):hover,
+#workspaces button:nth-child(9):hover {
+	background: @surface0;
+	color: @peach;
 }
 
 /* ── Clock ───────────────────────────────────────────────────────────────── */
