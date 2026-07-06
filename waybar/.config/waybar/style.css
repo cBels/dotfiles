@@ -47,25 +47,55 @@ tooltip label {
 	color: @subtext1;
 }
 
-/* Visible on a monitor but not focused: colored number only */
-#workspaces button.visible {
-	color: @teal;
-}
-
-/* Active (= focused workspace): full indicator */
-#workspaces button.active,
-#workspaces button.focused {
-	background: @surface0;
-	color: @teal;
-	border-bottom: 2px solid @teal;
-}
-
 #workspaces button.empty {
 	color: @surface2;
 }
 
 #workspaces button.urgent {
 	color: @red;
+}
+
+/* ── Left-monitor workspaces (1–6): teal accent ─────────────────────────── */
+
+/* Visible on HDMI-A-1 (shown, no focus): teal number only */
+#workspaces button:nth-child(1).visible,
+#workspaces button:nth-child(2).visible,
+#workspaces button:nth-child(3).visible,
+#workspaces button:nth-child(4).visible,
+#workspaces button:nth-child(5).visible,
+#workspaces button:nth-child(6).visible {
+	background: transparent;
+	color: @teal;
+	border-bottom: none;
+}
+
+/* Active/focused on HDMI-A-1: full teal indicator */
+#workspaces button:nth-child(1).active,
+#workspaces button:nth-child(2).active,
+#workspaces button:nth-child(3).active,
+#workspaces button:nth-child(4).active,
+#workspaces button:nth-child(5).active,
+#workspaces button:nth-child(6).active,
+#workspaces button:nth-child(1).focused,
+#workspaces button:nth-child(2).focused,
+#workspaces button:nth-child(3).focused,
+#workspaces button:nth-child(4).focused,
+#workspaces button:nth-child(5).focused,
+#workspaces button:nth-child(6).focused {
+	background: @surface0;
+	color: @teal;
+	border-bottom: 2px solid @teal;
+}
+
+/* Hover for left-monitor group */
+#workspaces button:nth-child(1):hover,
+#workspaces button:nth-child(2):hover,
+#workspaces button:nth-child(3):hover,
+#workspaces button:nth-child(4):hover,
+#workspaces button:nth-child(5):hover,
+#workspaces button:nth-child(6):hover {
+	background: @surface0;
+	color: @teal;
 }
 
 /* ── Right-monitor workspaces (7–9): orange accent ──────────────────────── */
