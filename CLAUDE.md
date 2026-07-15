@@ -123,6 +123,13 @@ This machine has **two desktop sessions**, selectable at the SDDM login screen.
 - Default sink = the EQ sink. Apps and volume knob target it via `@DEFAULT_AUDIO_SINK@`
 - **Gain staging:** K7 software volume parked at 100%, EQ sink is the working volume, K7 physical dial for coarse adjustment. Never push software volume past 100% — the EQ preamp headroom is calculated for ≤100%
 - After editing the EQ config: `systemctl --user restart pipewire pipewire-pulse wireplumber`, then verify sink with `wpctl status`
+- A second EQ profile exists for Sony MDR-1R: `~/.config/pipewire/pipewire.conf.d/SonyMDR1R.conf` → sink `eq_sink.mdr1r`, profile at `~/.config/pipewire/eq/Sonymdr1r.txt`. Both EQ sinks target the K7. Only `eq_sink.dt1990` is the system default; MDR-1R sink is passive and unused unless something routes to it.
+
+### Audio — SteelSeries Alias microphone (added 2026-07-13)
+- **Device:** SteelSeries Alias USB microphone (Bus 001, Port 10, `alsa_input.usb-SteelSeries_SteelSeries_Alias-00.mono-fallback`)
+- **Problem diagnosed 2026-07-13:** The Alias was generating continuous `xhci_hcd ... buffer overrun event for slot 10 ep 4` kernel errors because PipeWire's default ALSA period size (~256 frames / ~5ms) was too small for the USB host controller to service reliably under gaming load. These overruns caused WirePlumber to intermittently drop audio links (`failed to configure si-standard-link`), which crashed BG3 and SoT when their audio sessions broke.
+- **Fix:** WirePlumber rule at `~/.config/wireplumber/wireplumber.conf.d/51-steelseries-alias-fix.conf` sets `api.alsa.period-size = 1024`, `api.alsa.period-num = 4`, `api.alsa.headroom = 8192` for the capture node — giving ~21ms per period and an 84ms total buffer so the endpoint never overruns.
+- To verify the fix is holding after a session: `journalctl --since "today" | grep "buffer overrun"` — should be empty or very sparse.
 
 ---
 
@@ -208,29 +215,47 @@ Current state (verified via `kscreen-doctor -o` on 2026-07-07):
 
 ### Gaming (KDE)
 
-> **Note:** All Gamescope launch options below were tuned under Hyprland. Behavior under KWin has not yet been tested. Every flag is marked with its verification status.
+> **Note (updated 2026-07-07):** Gamescope is **not used under KDE**. KWin handles XWayland games correctly on its own — verified full 360Hz on DP-2 without it (the 60Hz XWayland lock was a Hyprland-specific issue). Games launch directly with the wrapper + overlay only.
 
 #### Standard Launch Options
 ```
-gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --force-grab-cursor -- game-performance mangohud %command%
+game-performance %command%
 ```
 
-| Flag | verified in KDE | Notes |
-|------|-----------------|-------|
-| `gamescope -w -h -r -f` | TODO | XWayland games under KWin may also lock to 60Hz — Gamescope likely still needed |
-| `--hdr-enabled` | TODO | HDR is native and always-on in KDE; this flag may be redundant or interact differently with KWin |
-| `--hdr-sdr-content-nits 250` | TODO | KDE's SDR brightness is 240 nits — may need tuning to match |
-| `--force-grab-cursor` | TODO | Likely still needed to prevent cursor escape |
-| `game-performance` | TODO | CachyOS wrapper — should work regardless of DE |
-| `mangohud` | TODO | Should work regardless of DE |
+| Component | verified in KDE | Notes |
+|-----------|-----------------|-------|
+| `game-performance` | Yes | CachyOS wrapper — sets CPU to performance mode, works regardless of DE |
+| `mangohud` | Yes | Works, but dropped from most games (overlay is intrusive) — add back per-game when debugging (e.g. BG3 VRAM stutter) |
+| 360Hz on DP-2 | Yes | Full 360Hz without Gamescope — KWin does not have Hyprland's XWayland Hz lock |
+
+#### HDR in games (KDE) — two recipes depending on game type
+Requirements in both cases: HDR enabled on DP-2 in Display Settings (always on), game in **exclusive fullscreen** (windowed/borderless blocks HDR), native Wayland window (XWayland has no HDR path).
+
+| Game type | Launch options | How it works |
+|-----------|---------------|--------------|
+| Native Linux Vulkan (e.g. BG3) | `SDL_VIDEODRIVER=wayland ENABLE_HDR_WSI=1 game-performance %command%` | `SDL_VIDEODRIVER=wayland` = native Wayland window; `ENABLE_HDR_WSI=1` activates vk-hdr-layer-kwin6-git which negotiates HDR10 with KWin |
+| Windows game via Proton/DXVK (e.g. SoT) | `PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1 game-performance %command%` | Wine's native Wayland driver + HDR exposed through DXVK; no vk-hdr-layer needed. Use **proton-cachyos** (verified 2026-07-07) — Valve Proton 10.0 did not engage the Wayland driver |
+
+> **Notes on Proton's Wayland driver (verified with SoT 2026-07-07):**
+> - The window class/app-id **stays** `steam_app_<APPID>`, so KWin window rules keep matching. A Wayland-native window is identifiable in `queryWindowInfo` by **empty** `clientMachine`/`resourceName` and a **set** `desktopFile` (XWayland: `clientMachine: localhost`, `resourceName` set). Also: `xlsclients` lists only XWayland clients.
+> - The Steam overlay may stop working under the Wayland driver (known limitation).
+> - **Compat-tool/env changes don't apply if stale game processes linger.** Steam launches can leave the whole chain alive (steam.exe, wineserver, reaper, pressure-vessel). Before re-testing: `pkill -f <GameName>`, kill any `wineserver`, verify with `pgrep -a -f "<GameName>|wineserver"`, then fully restart Steam.
+> - Embedded webviews (e.g. Xbox login) may render as a **pure white window** under the Wayland driver. Workaround: launch once without the Wayland flags (XWayland), log in (token is saved in the game's Wine prefix), exit cleanly, restore the flags.
+
+#### Launching games on a specific monitor (KDE)
+Without Gamescope, window placement is controlled by **KWin window rules**, not launch options. Games open on the primary monitor by default. To force a game onto DP-2 without changing the primary monitor: System Settings → Window Management → Window Rules → match window class (substring) `steam_app_<APPID>` → Add Property → **Screen** → **Apply Initially** → select DP-2's screen. "Apply Initially" places it at launch but still allows moving it afterward (Meta+Shift+Left/Right moves fullscreen windows between monitors); "Force" would pin it permanently. Rules are stored in `~/.config/kwinrulesrc`.
+
+**Screen rule caveats (learned 2026-07-07, Sea of Thieves):**
+- Screen values are **0-indexed** — with two monitors only 0 and 1 are valid (DP-2 = 0 currently; can change if outputs swap on reboot).
+- The Screen rule works for normal windows (splash screens) but **exclusive-fullscreen XWayland windows ignore it** — they target the primary X screen's geometry directly. Workarounds: borderless/windowed mode in-game (rule then works, but blocks HDR), the Proton Wayland driver (no X11 primary involved), or reordering display priority in System Settings (changes the XWayland primary; panel/desktop layout unaffected).
 
 #### Gaming Software
 | Software | Version | Notes |
 |----------|---------|-------|
 | Steam | via pacman | Primary game launcher |
 | Heroic Games Launcher | via pacman | Epic Games Store on Linux |
-| Gamescope | via pacman | Still used under KDE for Hz/xwayland isolation |
-| GE-Proton | GE-Proton10_34 | Preferred Proton version |
+| Gamescope | via pacman | **Not used under KDE** — only needed in Hyprland. Still installed. |
+| proton-cachyos | 11.0-20260602 (SLR) | **Preferred Proton (KDE)** — maintained Wayland driver (from Proton-EM) + auto-HDR. GE-Proton10_34 appears no longer installed (only proton-cachyos and Valve Proton 10.0 available as of 2026-07-07) |
 | MangoHud | via cachyos-gaming-meta | FPS/GPU overlay |
 | game-performance | via CachyOS | CPU performance wrapper |
 | vk-hdr-layer-kwin6-git | r47.303e0c6-1 | Vulkan HDR layer for KWin (installed 2026-07-07) |
@@ -242,19 +267,23 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 
 **Baldur's Gate 3 (App ID: 1086940)**
 - `hdr-on.sh`/`hdr-off.sh` do NOT apply in KDE — HDR is always-on via native Display Settings.
-- KDE launch options (proposed, untested): `ENABLE_HDR_WSI=1 gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --force-grab-cursor -- game-performance mangohud %command%`
+- KDE launch options (**verified working 2026-07-07**): `SDL_VIDEODRIVER=wayland ENABLE_HDR_WSI=1 game-performance %command%`
+- **HDR verified working in KDE** — noticeably better than Hyprland ever was. Conclusion: Hyprland's HDR output likely never truly worked (game registered HDR input, but the gamescope→Hyprland→Nvidia handoff degraded the output). KDE path is direct: game → vk-hdr-layer → KWin → display.
+- Not yet 100% on par with Windows — likely in-game HDR calibration settings, **TODO: calibrate**
 - BG3 save files and VRAM stutter fix are the same regardless of DE — see Hyprland section for details.
-- In-KDE behavior: **TODO (not yet tested)**
 
 **Sea of Thieves (App ID: 1172620)**
-- Standard launch options (no HDR) — KDE behavior: **TODO (not yet tested)**
+- KDE launch options (**verified working 2026-07-07, HDR working**): `PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1 game-performance %command%` — with **proton-cachyos** forced in Compatibility settings and exclusive fullscreen in-game
+- **HDR works in KDE** — the Hyprland-era conclusion that SoT HDR was a dead end was wrong; the blocker was XWayland/gamescope, not the game. Proton's Wayland driver exposes HDR and the game accepts it.
+- Runs on DP-2 via KWin window rule (class `steam_app_1172620`, Force Screen 0) — rule keeps matching under the Wayland driver (app-id stays the same). The game also saves its fullscreen monitor internally after being fullscreened on DP-2 once.
+- **Xbox login white screen** under the Wayland driver — see the Wayland driver notes above for the XWayland-login workaround (used successfully 2026-07-07).
 
 **Guild Wars 2**
 - Standard launch options — KDE behavior: **TODO (not yet tested)**
 - ArcDPS: same as Hyprland (see below)
 
 ### Known Issues [KDE]
-- All gaming launch options and per-game behavior are untested as of 2026-07-07. Test each game and update this section.
+- Standard launch options (`game-performance %command%`, no gamescope) verified working with full 360Hz as of 2026-07-07. BG3 HDR verified. SoT HDR verified (proton-cachyos + Wayland driver). Remaining TODOs: BG3 HDR calibration, Satisfactory/GW2 general behavior.
 - `hdr-on.sh` / `hdr-off.sh` will break if run under KDE (they edit `hyprland.lua`). Do not use them.
 - `wlopm` (screen-off shortcut) was set up for Hyprland — KDE has its own power management; verify or configure a KDE equivalent.
 
@@ -382,7 +411,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 **Sea of Thieves (App ID: 1172620)**
 - Runs via Proton (DirectX → DXVK)
 - Launch options: standard launch options (see above) — no HDR
-- **HDR: abandoned (2026-07-06).** The game supports HDR on Windows PC, but no in-game HDR option appears under Proton. Tried the BG3-style setup (`hdr-on.sh` + gamescope `--hdr-enabled`) with `DXVK_HDR=1` — the correct switch for DXVK titles (makes DXVK report an HDR-capable display to the game) — still nothing. Note: `ENABLE_HDR_WSI=1` does nothing here; that's for native Vulkan games like BG3 only.
+- **HDR: abandoned (2026-07-06) — in Hyprland.** The game supports HDR on Windows PC, but no in-game HDR option appears under Proton via XWayland/gamescope. Tried the BG3-style setup (`hdr-on.sh` + gamescope `--hdr-enabled`) with `DXVK_HDR=1` — still nothing. **Update 2026-07-07: HDR works in KDE** via proton-cachyos + Proton Wayland driver — the blocker was XWayland/gamescope, not the game. See KDE section.
 - Crosshair offset issue diagnosed in this game — see "Monitor OSD crosshair off-center" under Known Issues
 
 **Guild Wars 2**
@@ -418,6 +447,7 @@ gamescope -w 2560 -h 1440 -r 360 -f --hdr-enabled --hdr-sdr-content-nits 250 --f
 - **Norwegian keyboard layout** `[Both]` — Set via `input { kb_layout = no }` in hyprland.lua AND `sudo localectl set-keymap no`. The `localectl` setting is system-wide and also affects KDE.
 - **/mnt/games not mounting on boot** `[Both]` — Was using device path `/dev/nvme1n1p1` in fstab. Fixed by switching to UUID with `nofail` option.
 - **Black screen on live ISO boot** `[Both]` — Nvidia RTX 4070 Ti + no iGPU. Solution: select "CachyOS Legacy Hardware (GPU nomodeset)" in GRUB.
+- **BG3 and SoT random crashes / freezes (2026-07-13, solved)** `[Both]` — Root cause: SteelSeries Alias USB microphone generating `xhci_hcd buffer overrun` on its capture endpoint under gaming load → WirePlumber dropped audio links → game audio sessions broke → crash. Fixed by increasing the ALSA buffer for the capture node via `~/.config/wireplumber/wireplumber.conf.d/51-steelseries-alias-fix.conf`. See "Audio — SteelSeries Alias microphone" section above for details.
 
 ---
 
@@ -471,7 +501,7 @@ GitHub repo: **[to be added after cleanup]**
 
 ---
 
-*Last updated: 2026-07-07*
+*Last updated: 2026-07-13*
 
 ---
 
