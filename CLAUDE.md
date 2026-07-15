@@ -582,6 +582,14 @@ notify-send "Test" "Mako colors"        # Mako (live, no restart needed)
 | Aqua / bright | `#689d6a` / `#8ec07c` |
 | Orange / bright | `#d65d0e` / `#fe8019` |
 
+### Vesktop transparency/blur (added 2026-07-15)
+- Custom theme: `~/.config/vesktop/themes/GruvboxSharpCustom.theme.css` (NOT in dotfiles by user choice) — copy of GruvboxSharp v3.2 with an override block at the end making backgrounds rgba (~0.8 alpha, floating UI 0.95). Tune alpha values in that block.
+- 2026-07-15: message-group "cards" added at the end of the theme: each author-group gets rgba(13,15,16,0.35) fill + 1px rgba(80,73,69,0.6) border + 8px gap above new groups (uses `:has()` on `li[class*=messageListItem_]`/`[class*=groupStart_]`). Tune fill/border alpha and gap in that block.
+- 2026-07-15: converted from Dark Soft to Dark Hard palette via global replace: `#32302f`→`#1d2021` (bg0_h), `#282828`→`#141617` (gruvbox-material bg_dim), `#1d2021`→`#0d0f10` (custom darkest), plus matching rgba() triplets in the override block. Raised surfaces (`#3c3836`/`#504945`) and text/accents unchanged.
+- Vesktop window transparency: `"transparent": true` in `~/.config/vesktop/settings.json` (the Vesktop file, not Vencord's `settings/settings.json`). Linux uses this boolean — `transparencyOption` is Windows-only.
+- Hyprland: blur `size 6, passes 2, ignore_opacity = true` in hyprland.lua handles the blur natively.
+- KDE: needs `kwin-effects-forceblur` (AUR, "Better Blur") — disable stock Blur effect, enable Better Blur, add window class `vesktop` in its settings. Must be rebuilt (`paru -S --rebuild kwin-effects-forceblur`) after Plasma upgrades. Known bug: Vesktop transparency can stop working after reboot on KDE/Wayland (Vesktop issue #1241).
+
 ### Notes from the Gruvbox migration
 - Waybar already had `themes/gruvbox.css` -- just needed the import changed.
 - Starship already had `[palettes.gruvbox_dark]` -- just needed the `palette =` line changed.
